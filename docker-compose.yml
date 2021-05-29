@@ -1,0 +1,15 @@
+version: '3'
+services:
+  gitolite:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-gitolite
+      args:
+        - ADMIN_PUB_KEY
+    ports:
+      - "6666:22"
+    restart: "no" # TODO
+#    volumes:
+#      - gitdata:/home/git
+#volumes:
+#  gitdata:
