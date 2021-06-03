@@ -1,3 +1,11 @@
 #!/bin/sh
 
+if [ ! -f ~git/.ssh/authorized_keys ]; then
+    su - git -c "git config --global init.defaultBranch master"
+    su - git -c "mkdir -p ~/.gitolite/logs ~/.ssh"
+    su - git -c "mv /tmp/gitolite ~/"
+    su - git -c "~/gitolite/install"
+    su - git -c "/home/git/gitolite/src/gitolite setup -pk /tmp/admin.pub"
+fi
+
 exec /usr/sbin/sshd -D -e "$@"

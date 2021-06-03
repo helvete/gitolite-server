@@ -7,9 +7,9 @@ services:
       args:
         - ADMIN_PUB_KEY
     ports:
-      - "6666:22"
-    restart: "no" # TODO
-#    volumes:
-#      - gitdata:/home/git
-#volumes:
-#  gitdata:
+      - "62666:22"
+    restart: always
+    volumes:
+      - gitdata:/home/git
+volumes:
+  gitdata:

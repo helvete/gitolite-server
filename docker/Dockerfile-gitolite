@@ -3,33 +3,29 @@ FROM alpine:3.13
 ARG ADMIN_PUB_KEY
 
 RUN apk upgrade -U && \
-	apk --update add --no-cache \
-	git \
-	perl \
-	openssh && \
-	rm -rf /var/cache/apk/* && \
-	adduser -D git && \
-	passwd -u git && \
-	/usr/bin/ssh-keygen -A && \
-	echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config && \
-	echo 'PermitRootLogin no' >> /etc/ssh/sshd_config
+    apk --update add --no-cache \
+    git \
+    perl \
+    openssh && \
+    rm -rf /var/cache/apk/* && \
+    adduser -D git && \
+    passwd -u git && \
+    /usr/bin/ssh-keygen -A && \
+    echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config && \
+    echo 'PermitRootLogin no' >> /etc/ssh/sshd_config
 
 COPY ./docker/entrypoint /
 
-#VOLUME /home/git
-WORKDIR /home/git
 USER git
 ENV USER=git
 EXPOSE 22
 
-RUN	git clone https://github.com/sitaramc/gitolite && \
-	# TODO: remove ./.git directory
-	./gitolite/install && \
-	echo "${ADMIN_PUB_KEY}" > ./admin.pub && \
-	mkdir -p ./.gitolite/logs ./.ssh && \
-	git config --global init.defaultBranch master && \
-	`pwd`/gitolite/src/gitolite setup -pk ./admin.pub
+WORKDIR /tmp
+
+RUN git clone https://github.com/sitaramc/gitolite && \
+    echo "${ADMIN_PUB_KEY}" > /tmp/admin.pub
+
+WORKDIR /home/git
 
 USER root
-#CMD sleep 3600
 ENTRYPOINT ["/entrypoint"]
