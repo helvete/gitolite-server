@@ -1,0 +1,15 @@
+FROM nginx:1.20.0-alpine
+
+RUN apk upgrade -U && \
+    apk --update add --no-cache \
+    git-gitweb \
+    fcgiwrap \
+    perl-cgi && \
+    chown -R nginx:nginx /usr/share/gitweb
+
+WORKDIR /usr/share/gitweb
+
+COPY ./docker/nginx.conf /etc/nginx/nginx.conf
+COPY ./docker/site.conf /etc/nginx/conf.d/default.conf
+
+CMD /usr/bin/fcgiwrap -s unix:/run/fcgiwrap/fw.sock& sleep 1 && /bin/chown nginx:nginx /run/fcgiwrap/fw.sock && nginx -g "daemon off;"

@@ -11,5 +11,12 @@ services:
     restart: always
     volumes:
       - gitdata:/home/git
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-nginx
+    restart: always
+    ports:
+      - "43448:80"
 volumes:
   gitdata:
