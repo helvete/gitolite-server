@@ -15,8 +15,12 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-nginx
+      args:
+        - "SERVER_NAME_VALUE=${SERVER_NAME_VALUE}"
     restart: always
     ports:
       - "43448:80"
+    volumes:
+      - gitdata:/git
 volumes:
   gitdata:

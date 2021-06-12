@@ -8,4 +8,8 @@ if [ ! -f ~git/.ssh/authorized_keys ]; then
     su - git -c "/home/git/gitolite/src/gitolite setup -pk /tmp/admin.pub"
 fi
 
+if [ -f ~git/projects.list ]; then
+    chmod 644 ~git/projects.list
+fi
+
 exec /usr/sbin/sshd -D -e "$@"
