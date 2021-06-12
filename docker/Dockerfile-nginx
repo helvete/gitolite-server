@@ -4,7 +4,8 @@ RUN apk upgrade -U && \
     apk --update add --no-cache \
     git-gitweb \
     fcgiwrap \
-    perl-cgi && \
+    perl-cgi \
+    apache2-utils && \
     chown -R nginx:nginx /usr/share/gitweb
 
 WORKDIR /usr/share/gitweb
@@ -14,8 +15,14 @@ COPY ./docker/site.conf /etc/nginx/conf.d/default.conf
 COPY ./docker/gitweb.conf /etc/gitweb.conf
 
 ARG SERVER_NAME_VALUE
+ARG AUTH_BASIC_IP_WHITELIST
+ARG AUTH_BASIC_USER
+ARG AUTH_BASIC_PASSWORD
 
 # TODO: Set instance name using ENV variables
-RUN sed -i "s/Untitled/${SERVER_NAME_VALUE}/" /usr/share/gitweb/gitweb.cgi
+# TODO: Don't generate password on every container run
+RUN sed -i "s/Untitled/${SERVER_NAME_VALUE}/" /usr/share/gitweb/gitweb.cgi && \
+    sed -i "s/AUTH_BASIC_IP_WHITELIST/${AUTH_BASIC_IP_WHITELIST}/" /etc/nginx/conf.d/default.conf && \
+    echo "${AUTH_BASIC_PASSWORD}" | htpasswd -cBiC 13 /etc/nginx/htpasswd gitweb
 
 CMD /usr/bin/fcgiwrap -s unix:/run/fcgiwrap/fw.sock& sleep 1 && /bin/chown nginx:nginx /run/fcgiwrap/fw.sock && nginx -g "daemon off;"

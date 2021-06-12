@@ -17,6 +17,9 @@ services:
       dockerfile: ./docker/Dockerfile-nginx
       args:
         - "SERVER_NAME_VALUE=${SERVER_NAME_VALUE}"
+        - "AUTH_BASIC_IP_WHITELIST=${AUTH_BASIC_IP_WHITELIST}"
+        - "AUTH_BASIC_USER=${AUTH_BASIC_USER}"
+        - "AUTH_BASIC_PASSWORD=${AUTH_BASIC_PASSWORD}"
     restart: always
     ports:
       - "43448:80"
